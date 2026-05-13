@@ -24,7 +24,9 @@ swiftc \
     "$SCRIPT_DIR"/Sources/*.swift \
     -o "$MACOS_DIR/$APP_NAME"
 
+mkdir -p "$CONTENTS/Resources"
 cp "$SCRIPT_DIR/Resources/Info.plist" "$CONTENTS/"
+cp "$SCRIPT_DIR/Resources/AppIcon.icns" "$CONTENTS/Resources/"
 
 echo "Build successful: $APP_BUNDLE"
 echo ""
