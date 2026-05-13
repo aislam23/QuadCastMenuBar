@@ -79,22 +79,27 @@ class QuadCastService {
     }
 
     private func killCurrent() {
-        guard let proc = currentProcess, proc.isRunning else {
-            currentProcess = nil
-            return
-        }
-
-        proc.terminate()
-        // Wait for it to release USB
-        let deadline = Date().addingTimeInterval(1)
-        while proc.isRunning && Date() < deadline {
-            Thread.sleep(forTimeInterval: 0.05)
-        }
-        if proc.isRunning {
-            kill(proc.processIdentifier, SIGKILL)
-            Thread.sleep(forTimeInterval: 0.1)
+        // Kill tracked process
+        if let proc = currentProcess, proc.isRunning {
+            proc.terminate()
+            let deadline = Date().addingTimeInterval(1)
+            while proc.isRunning && Date() < deadline {
+                Thread.sleep(forTimeInterval: 0.05)
+            }
+            if proc.isRunning {
+                kill(proc.processIdentifier, SIGKILL)
+                Thread.sleep(forTimeInterval: 0.1)
+            }
         }
         currentProcess = nil
+
+        // Kill any orphaned quadcastrgb processes (e.g. from previous app instances)
+        let pkill = Process()
+        pkill.executableURL = URL(fileURLWithPath: "/usr/bin/pkill")
+        pkill.arguments = ["-x", "quadcastrgb"]
+        try? pkill.run()
+        pkill.waitUntilExit()
+
         // Extra pause for USB device to become available
         Thread.sleep(forTimeInterval: 0.3)
     }
