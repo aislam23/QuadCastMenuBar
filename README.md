@@ -1,6 +1,6 @@
 # QuadCast RGB
 
-<img src="Resources/AppIcon.icns" width="128" alt="QuadCast RGB icon" align="right">
+<img src="assets/icon.png" width="128" alt="QuadCast RGB icon" align="right">
 
 Управляй подсветкой HyperX QuadCast S прямо из строки меню macOS — без лишних приложений и без HyperX NGENUITY.
 
@@ -18,6 +18,8 @@
 - **Автоприменение** — настройки применяются при подключении микрофона и пробуждении Mac
 - **Запуск при старте** — опциональный автозапуск вместе с системой
 - **Запоминает настройки** между запусками
+
+![Screenshot](assets/screenshot.png)
 
 ---
 
