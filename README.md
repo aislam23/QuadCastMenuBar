@@ -1,68 +1,70 @@
+English | [Русский](README.ru.md)
+
 # QuadCast RGB
 
 <img src="assets/icon.png" width="128" alt="QuadCast RGB icon" align="right">
 
-Управляй подсветкой HyperX QuadCast S прямо из строки меню macOS — без лишних приложений и без HyperX NGENUITY.
+Control your HyperX QuadCast S RGB lighting directly from the macOS menu bar — no extra apps, no HyperX NGENUITY required.
 
-> Требуется macOS 14 Sonoma или новее.
+> Requires macOS 14 Sonoma or later.
 
 ---
 
-## Возможности
+## Features
 
-- **10 цветовых пресетов** — красный, оранжевый, жёлтый, зелёный, голубой, синий, фиолетовый, розовый, белый, выкл
-- **Произвольный цвет** через системный color picker
-- **5 режимов подсветки** — Solid, Blink, Cycle, Wave, Lightning
-- **Яркость** — регулировка от 0 до 100%
-- **Секции** — управляй верхней, нижней или всей подсветкой сразу
-- **Автоприменение** — настройки применяются при подключении микрофона и пробуждении Mac
-- **Запуск при старте** — опциональный автозапуск вместе с системой
-- **Запоминает настройки** между запусками
+- **10 color presets** — red, orange, yellow, green, cyan, blue, purple, pink, white, off
+- **Custom color** via the native macOS color picker
+- **5 lighting modes** — Solid, Blink, Cycle, Wave, Lightning
+- **Brightness control** — 0 to 100%
+- **Section control** — target the upper, lower, or full ring independently
+- **Auto-apply** — settings are re-applied when the mic is plugged in or the Mac wakes from sleep
+- **Launch at Login** — optional autostart with macOS
+- **Persistent settings** — remembers your last configuration across restarts
 
 ![Screenshot](assets/screenshot.png)
 
 ---
 
-## Установка
+## Installation
 
-### Через Homebrew (рекомендуется)
+### Homebrew (recommended)
 
 ```bash
 brew tap aislam23/tap
 brew install --cask quadcast-menubar
 ```
 
-### Вручную
+### Manual
 
-Скачай последний `.zip` со [страницы релизов](https://github.com/aislam23/QuadCastMenuBar/releases), распакуй и перенеси `QuadCastMenuBar.app` в папку `/Applications`.
-
----
-
-## Требования
-
-**Обязательно:** утилита командной строки [`quadcastrgb`](https://github.com/stoe/quadcast-rgb) должна быть установлена в `/usr/local/bin/quadcastrgb`.
-
-Приложение использует её для отправки команд микрофону через USB. Без неё строка меню покажет ошибку `quadcastrgb not found`.
+Download the latest `.zip` from the [releases page](https://github.com/aislam23/QuadCastMenuBar/releases), unzip it, and move `QuadCastMenuBar.app` to `/Applications`.
 
 ---
 
-## Использование
+## Requirements
 
-После запуска в строке меню появится иконка микрофона:
+**Required:** the [`quadcastrgb`](https://github.com/stoe/quadcast-rgb) command-line tool must be installed at `/usr/local/bin/quadcastrgb`.
 
-- **`mic.fill`** — микрофон подключён
-- **`mic.slash`** — микрофон не найден
-
-Кликни по иконке, чтобы открыть панель управления. Изменения применяются мгновенно.
+The app uses it to send commands to the microphone over USB. Without it the menu bar icon will show a `quadcastrgb not found` error.
 
 ---
 
-## Сборка из исходников
+## Usage
 
-**Требования:** macOS 14+, Xcode Command Line Tools
+After launching, a microphone icon appears in the menu bar:
+
+- **`mic.fill`** — microphone connected
+- **`mic.slash`** — microphone not found
+
+Click the icon to open the control panel. Changes are applied instantly.
+
+---
+
+## Building from Source
+
+**Requirements:** macOS 14+, Xcode Command Line Tools
 
 ```bash
-xcode-select --install   # если ещё не установлено
+xcode-select --install   # if not already installed
 ```
 
 ```bash
@@ -71,32 +73,32 @@ cd QuadCastMenuBar
 ./build.sh
 ```
 
-Готовый бандл появится в `build/QuadCastMenuBar.app`.
+The app bundle will be placed in `build/QuadCastMenuBar.app`.
 
-**Сборка с подписью Developer ID:**
+**Build with Developer ID signing:**
 
 ```bash
-SIGN_IDENTITY="Developer ID Application: Имя (TEAMID)" ./build.sh
+SIGN_IDENTITY="Developer ID Application: Your Name (TEAMID)" ./build.sh
 ```
 
 ---
 
-## Структура проекта
+## Project Structure
 
-| Файл | Назначение |
-|------|-----------|
-| `Sources/QuadCastMenuBarApp.swift` | Точка входа, `MenuBarExtra` |
-| `Sources/ContentView.swift` | UI панели управления |
-| `Sources/AppState.swift` | Состояние приложения, цветовые пресеты |
-| `Sources/QuadCastService.swift` | Запуск `quadcastrgb`, управление процессом |
-| `Sources/USBDeviceMonitor.swift` | Отслеживание подключения/отключения USB |
-| `Sources/SystemEventMonitor.swift` | Реакция на пробуждение Mac |
-| `Resources/Info.plist` | Метаданные бандла |
-| `Resources/entitlements.plist` | Entitlements для hardened runtime |
-| `build.sh` | Скрипт сборки |
+| File | Purpose |
+|------|---------|
+| `Sources/QuadCastMenuBarApp.swift` | App entry point, `MenuBarExtra` |
+| `Sources/ContentView.swift` | Control panel UI |
+| `Sources/AppState.swift` | App state, color presets |
+| `Sources/QuadCastService.swift` | Launches `quadcastrgb`, manages the process |
+| `Sources/USBDeviceMonitor.swift` | Tracks USB connect/disconnect events |
+| `Sources/SystemEventMonitor.swift` | Reacts to system wake |
+| `Resources/Info.plist` | Bundle metadata |
+| `Resources/entitlements.plist` | Entitlements for hardened runtime |
+| `build.sh` | Build script |
 
 ---
 
-## Лицензия
+## License
 
 MIT © [Artem Islamov](https://github.com/aislam23)
