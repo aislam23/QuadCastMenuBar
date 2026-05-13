@@ -28,6 +28,8 @@ mkdir -p "$CONTENTS/Resources"
 cp "$SCRIPT_DIR/Resources/Info.plist" "$CONTENTS/"
 cp "$SCRIPT_DIR/Resources/AppIcon.icns" "$CONTENTS/Resources/"
 
+codesign --force --deep --sign - "$APP_BUNDLE"
+
 echo "Build successful: $APP_BUNDLE"
 echo ""
 echo "To install:  cp -r '$APP_BUNDLE' /Applications/"
