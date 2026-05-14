@@ -34,6 +34,12 @@ brew tap aislam23/tap
 brew install --cask quadcast-menubar
 ```
 
+To update:
+
+```bash
+brew update && brew upgrade --cask quadcast-menubar
+```
+
 ### Manual
 
 Download the latest `.zip` from the [releases page](https://github.com/aislam23/QuadCastMenuBar/releases), unzip it, and move `QuadCastMenuBar.app` to `/Applications`.
