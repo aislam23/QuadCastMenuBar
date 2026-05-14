@@ -47,6 +47,9 @@ struct ContentView: View {
             }
 
             ColorPicker("Custom Color", selection: $customColor, supportsOpacity: false)
+                .onAppear {
+                    customColor = Color(hex: appState.selectedColorHex)
+                }
                 .onChange(of: customColor) { _, newValue in
                     appState.selectedColorHex = newValue.hexString
                     appState.applyCurrentSettings()

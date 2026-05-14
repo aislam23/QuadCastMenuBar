@@ -41,6 +41,7 @@ class AppState: ObservableObject {
     private var usbMonitor = USBDeviceMonitor()
     private var systemMonitor = SystemEventMonitor()
     private let service = QuadCastService()
+    private var connectivityTimer: Timer?
 
     var mode: LightingMode {
         get { LightingMode(rawValue: lightingMode) ?? .solid }
@@ -69,23 +70,18 @@ class AppState: ObservableObject {
         usbMonitor.onDeviceConnected = { [weak self] in
             guard let self else { return }
             self.isConnected = true
-
-            // Delay: IOKit fires before USB device is fully ready
             DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
                 guard let self, self.isConnected else { return }
-
                 self.applyCurrentSettings()
             }
         }
         usbMonitor.onDeviceDisconnected = { [weak self] in
-
             self?.isConnected = false
         }
         usbMonitor.startMonitoring()
         isConnected = usbMonitor.checkIfConnected()
 
         systemMonitor.onWake = { [weak self] in
-            // Delay for USB re-enumeration after wake
             DispatchQueue.main.asyncAfter(deadline: .now() + 3) { [weak self] in
                 guard let self, self.isConnected else { return }
                 self.applyCurrentSettings()
@@ -95,6 +91,22 @@ class AppState: ObservableObject {
 
         if isConnected {
             applyCurrentSettings()
+        }
+
+        // Fallback: poll every 5s in case IOKit notifications miss a connect/disconnect event
+        connectivityTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { [weak self] _ in
+            self?.pollConnectivity()
+        }
+    }
+
+    private func pollConnectivity() {
+        let nowConnected = usbMonitor.checkIfConnected()
+        guard nowConnected != isConnected else { return }
+        isConnected = nowConnected
+        if nowConnected {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
+                self?.applyCurrentSettings()
+            }
         }
     }
 
@@ -107,11 +119,15 @@ class AppState: ObservableObject {
         let s = section
 
         service.applyColor(hex: hex, mode: m, brightness: b, section: s) { [weak self] result in
-            // completion already dispatched to main queue by service
             switch result {
             case .success:
+                self?.isConnected = true
                 self?.lastError = nil
             case .failure(let error):
+                let msg = error.localizedDescription.lowercased()
+                if msg.contains("isn't connected") || msg.contains("not found") || msg.contains("no such device") {
+                    self?.isConnected = false
+                }
                 self?.lastError = error.localizedDescription
             }
         }
