@@ -41,7 +41,6 @@ class AppState: ObservableObject {
     private var usbMonitor = USBDeviceMonitor()
     private var systemMonitor = SystemEventMonitor()
     private let service = QuadCastService()
-    private var connectivityTimer: Timer?
 
     var mode: LightingMode {
         get { LightingMode(rawValue: lightingMode) ?? .solid }
@@ -91,22 +90,6 @@ class AppState: ObservableObject {
 
         if isConnected {
             applyCurrentSettings()
-        }
-
-        // Fallback: poll every 5s in case IOKit notifications miss a connect/disconnect event
-        connectivityTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { [weak self] _ in
-            self?.pollConnectivity()
-        }
-    }
-
-    private func pollConnectivity() {
-        let nowConnected = usbMonitor.checkIfConnected()
-        guard nowConnected != isConnected else { return }
-        isConnected = nowConnected
-        if nowConnected {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [weak self] in
-                self?.applyCurrentSettings()
-            }
         }
     }
 

@@ -8,8 +8,17 @@ class USBDeviceMonitor {
     private var notifyPort: IONotificationPortRef?
     private var iterators: [io_iterator_t] = []
 
-    private static let vendorID: Int = 0x0951  // Kingston / HyperX
-    private static let productIDs: [Int] = [5919, 5917]  // QuadCast S variants
+    // (vendorID, productID) pairs — sourced from Ors1mer/QuadcastRGB devio.c
+    private static let devices: [(vendor: Int, product: Int)] = [
+        (0x0951, 0x171f), // QuadCast S (Kingston)
+        (0x03f0, 0x0f8b), // QuadCast S (HP)
+        (0x03f0, 0x028c), // QuadCast S (HP variant)
+        (0x03f0, 0x048c), // QuadCast S (HP variant)
+        (0x03f0, 0x068c), // QuadCast S (HP variant)
+        (0x03f0, 0x098c), // DuoCast
+        (0x03f0, 0x09af), // QuadCast 2
+        (0x03f0, 0x02b5), // QuadCast 2S
+    ]
 
     func startMonitoring() {
         notifyPort = IONotificationPortCreate(kIOMainPortDefault)
@@ -20,10 +29,9 @@ class USBDeviceMonitor {
 
         let refcon = Unmanaged.passUnretained(self).toOpaque()
 
-        for pid in Self.productIDs {
-            // Device connected
+        for dev in Self.devices {
             var addIter: io_iterator_t = 0
-            if let dict = Self.createMatchingDict(productID: pid) {
+            if let dict = Self.createMatchingDict(vendorID: dev.vendor, productID: dev.product) {
                 IOServiceAddMatchingNotification(
                     port, "IOServiceFirstMatch", dict,
                     { ctx, iter in
@@ -36,9 +44,8 @@ class USBDeviceMonitor {
                 iterators.append(addIter)
             }
 
-            // Device disconnected
             var rmIter: io_iterator_t = 0
-            if let dict = Self.createMatchingDict(productID: pid) {
+            if let dict = Self.createMatchingDict(vendorID: dev.vendor, productID: dev.product) {
                 IOServiceAddMatchingNotification(
                     port, "IOServiceTerminate", dict,
                     { ctx, iter in
@@ -54,8 +61,8 @@ class USBDeviceMonitor {
     }
 
     func checkIfConnected() -> Bool {
-        for pid in Self.productIDs {
-            guard let dict = Self.createMatchingDict(productID: pid) else { continue }
+        for dev in Self.devices {
+            guard let dict = Self.createMatchingDict(vendorID: dev.vendor, productID: dev.product) else { continue }
             let service = IOServiceGetMatchingService(kIOMainPortDefault, dict)
             if service != IO_OBJECT_NULL {
                 IOObjectRelease(service)
@@ -84,7 +91,7 @@ class USBDeviceMonitor {
         }
     }
 
-    private static func createMatchingDict(productID: Int) -> CFMutableDictionary? {
+    private static func createMatchingDict(vendorID: Int, productID: Int) -> CFMutableDictionary? {
         guard let dict = IOServiceMatching("IOUSBHostDevice") else { return nil }
         let nsDict = dict as NSMutableDictionary
         nsDict["idVendor"] = vendorID
