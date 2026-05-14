@@ -40,14 +40,6 @@ Download the latest `.zip` from the [releases page](https://github.com/aislam23/
 
 ---
 
-## Requirements
-
-**Required:** the [`quadcastrgb`](https://github.com/stoe/quadcast-rgb) command-line tool must be installed at `/usr/local/bin/quadcastrgb`.
-
-The app uses it to send commands to the microphone over USB. Without it the menu bar icon will show a `quadcastrgb not found` error.
-
----
-
 ## Usage
 
 After launching, a microphone icon appears in the menu bar:

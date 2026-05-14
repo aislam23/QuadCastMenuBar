@@ -13,7 +13,14 @@ enum QuadCastError: LocalizedError {
 }
 
 class QuadCastService {
-    static let binaryPath = "/usr/local/bin/quadcastrgb"
+    static var binaryPath: String {
+        if let bundled = Bundle.main.url(forResource: "quadcastrgb", withExtension: nil)?.path,
+           FileManager.default.isExecutableFile(atPath: bundled) {
+            return bundled
+        }
+        return "/usr/local/bin/quadcastrgb"
+    }
+
     private let queue = DispatchQueue(label: "com.quadcastrgb.serial")
     private var currentProcess: Process?
 

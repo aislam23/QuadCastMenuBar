@@ -28,14 +28,21 @@ swiftc \
 mkdir -p "$CONTENTS/Resources"
 cp "$SCRIPT_DIR/Resources/Info.plist" "$CONTENTS/"
 cp "$SCRIPT_DIR/Resources/AppIcon.icns" "$CONTENTS/Resources/"
+cp "$SCRIPT_DIR/Resources/quadcastrgb" "$CONTENTS/Resources/"
 
 if [ -n "$SIGN_IDENTITY" ]; then
     echo "Signing with Developer ID: $SIGN_IDENTITY"
+    # Sign nested binary first, then the outer bundle
+    codesign --force --options runtime \
+        --entitlements "$SCRIPT_DIR/Resources/entitlements.plist" \
+        --sign "$SIGN_IDENTITY" \
+        "$CONTENTS/Resources/quadcastrgb"
     codesign --force --deep --options runtime \
         --entitlements "$SCRIPT_DIR/Resources/entitlements.plist" \
         --sign "$SIGN_IDENTITY" \
         "$APP_BUNDLE"
 else
+    codesign --force --sign - "$CONTENTS/Resources/quadcastrgb"
     codesign --force --deep --sign - "$APP_BUNDLE"
 fi
 
