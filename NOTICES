@@ -1,0 +1,20 @@
+QuadCast RGB includes the following third-party software:
+
+────────────────────────────────────────────────────────────────
+quadcastrgb
+Copyright (C) 2022, 2023, 2024 Ors1mer <ors1mer@ors1mer.xyz>
+Source: https://github.com/Ors1mer/QuadcastRGB
+
+Licensed under the GNU General Public License, version 2 ONLY.
+
+This program is free software: you can redistribute it and/or
+modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation, version 2 of the
+License ONLY.
+
+The full text of the GPL v2 license is available at:
+https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+
+QuadCast RGB (the menu bar app) communicates with quadcastrgb
+as a separate subprocess and is not a derivative work of it.
+────────────────────────────────────────────────────────────────

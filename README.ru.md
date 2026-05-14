@@ -94,3 +94,5 @@ SIGN_IDENTITY="Developer ID Application: Имя (TEAMID)" ./build.sh
 ## Лицензия
 
 MIT © [Artem Islamov](https://github.com/aislam23)
+
+Приложение включает [`quadcastrgb`](https://github.com/Ors1mer/QuadcastRGB) © Ors1mer, распространяется под [GNU GPL v2.0](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html). Подробности — в файле [NOTICES](NOTICES).

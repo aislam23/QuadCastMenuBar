@@ -29,6 +29,7 @@ mkdir -p "$CONTENTS/Resources"
 cp "$SCRIPT_DIR/Resources/Info.plist" "$CONTENTS/"
 cp "$SCRIPT_DIR/Resources/AppIcon.icns" "$CONTENTS/Resources/"
 cp "$SCRIPT_DIR/Resources/quadcastrgb" "$CONTENTS/Resources/"
+cp "$SCRIPT_DIR/NOTICES" "$CONTENTS/Resources/"
 
 if [ -n "$SIGN_IDENTITY" ]; then
     echo "Signing with Developer ID: $SIGN_IDENTITY"
