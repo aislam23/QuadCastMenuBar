@@ -3,7 +3,7 @@ import ServiceManagement
 
 struct ContentView: View {
     @ObservedObject var appState: AppState
-    @State private var customColor = Color.red
+    @State private var colorPanelOpen = false
     @State private var launchAtLogin = SMAppService.mainApp.status == .enabled
 
     private let columns = Array(repeating: GridItem(.fixed(32), spacing: 8), count: 5)
@@ -46,14 +46,28 @@ struct ContentView: View {
                 }
             }
 
-            ColorPicker("Custom Color", selection: $customColor, supportsOpacity: false)
-                .onAppear {
-                    customColor = Color(hex: appState.selectedColorHex)
+            // Custom color — uses NSColorPanel directly (SwiftUI ColorPicker
+            // doesn't work reliably in MenuBarExtra windows)
+            Button(action: openColorPanel) {
+                HStack {
+                    Text("Custom Color")
+                    Spacer()
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(Color(hex: appState.selectedColorHex))
+                        .frame(width: 28, height: 18)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 4)
+                                .stroke(Color.primary.opacity(0.15), lineWidth: 1)
+                        )
                 }
-                .onChange(of: customColor) { _, newValue in
-                    appState.selectedColorHex = newValue.hexString
-                    appState.applyCurrentSettings()
-                }
+            }
+            .buttonStyle(.plain)
+            .onReceive(NotificationCenter.default.publisher(for: NSColorPanel.colorDidChangeNotification)) { _ in
+                guard colorPanelOpen else { return }
+                let hex = Color(nsColor: NSColorPanel.shared.color).hexString
+                appState.selectedColorHex = hex
+                appState.applyCurrentSettings()
+            }
 
             Divider()
 
@@ -119,6 +133,17 @@ struct ContentView: View {
         }
         .padding()
         .frame(width: 260)
+    }
+
+    private func openColorPanel() {
+        colorPanelOpen = true
+        let panel = NSColorPanel.shared
+        panel.color = NSColor(Color(hex: appState.selectedColorHex))
+        panel.isContinuous = true
+        panel.showsAlpha = false
+        // LSUIElement apps must activate before showing a panel
+        NSApp.activate(ignoringOtherApps: true)
+        panel.makeKeyAndOrderFront(nil)
     }
 }
 
